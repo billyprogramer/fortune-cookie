@@ -1,46 +1,49 @@
+
 var http = require('http');
 var fs = require('fs');
+var colors = require('colors');
+var mime = require('mime');
 
-var server = http.createServer(function(req, res){
-    fs.readFile('./static/index.html','utf8',function(err,
-     content){
-         if(err){
-             //hubo error
+//importanto el objeto configurador
+var config = require('./config/config');
+//estableciendo tema de colores
+colors.setTheme(config.colorTheme);
+//importando configuraciones
+var IP = config.IP
+Port = config.Port;
 
-             res.writeHead(500,{
-            'Content-Type':'text/html'
-        
-             });
-          console.log('>erro en la letura');   
-          res.end("<h1>error interno</h1>");
-          }else{
-          res.writeHead(200,{ 'Content-Type':'text/html'
+var server = http.createServer(function (req, res) {
+    var url = req.url;
+    if (url === "/") {
+        url = '/index.html'
+    }
+    /// generando ruta del archivo solicitado
+    console.log(`>Recurso Solicitado${url}`.info);
+    var filePath = './static' + url;
+    console.log(`> Se servira el archivo ${url}`.info);
+    console.log(`>Sirviendo archivo : ${filePath}`);
+    //seleccionando el tipo mime de archivo
+    var mimeType = mime.lookup(filePath);
 
-             });
-
-        console.log('>sirviendo html index.html');
-        res.end(content);
-
-          }
-     });
-
- });
-
-     
-//    res.writeHead(200,{
-
-//    'Content-Type':'text/html'
-//     });
-//     res.write('<h1>server funcionado </h1>');
-//     res.write('<p>server funcionado </p>');
-//     res.end();
-
-// });
-
-server.listen(3000, '127.0.0.1', function(){
-
-
-    console.log('>server corriendo  en http://127.0.0.1:3000.....');
-
+    fs.readFile(filePath,
+        function (err, content) {
+            if (err) {
+                //hubo error
+                res.writeHead(500, {
+                    'Content-Type': 'text/html'
+                });
+                console.log('>erro en la letura'.err+'en un archivo');
+                res.end("<H1>error interno</H1>".err);
+            } else {
+                res.writeHead(200, {
+                    'Content-Type': mimeType
+                });
+                console.log(`>Sirviendo archivo : ${filePath}`.ready);
+                res.end(content);
+            }
+        });
+});
+server.listen(Port, IP, function () {
+    console.log(`>Server Corriendo en http://${IP}:${Port}...`.data);
 });
 

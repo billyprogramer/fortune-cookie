@@ -18,5 +18,8 @@
     "js"
   ],
   "author": "bmms",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
 }
